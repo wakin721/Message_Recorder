@@ -45,3 +45,11 @@
 3.目前插件仍在开发中，遇到任何问题欢迎反馈。
 
 <!-- 插件开发者自行填写插件使用说明 -->
+
+## 版本
+preview1.2：更新了聊天记录的保存及回忆生成逻辑，可以通过输入命令：查看回忆 查看已生成的回忆。
+
+preview1.1：优化代码，增加模型生成的超时机制。
+
+preview1.0：随便写了一个记忆插件，代码参考了小馄饨的QQSillyTavern：https://github.com/sanxianxiaohuntun/QQSillyTavern
+
