@@ -39,6 +39,9 @@
 
 ## 使用
 1.启动插件后会自动在data/plugins/Message_Recorder生成回忆文件夹和临时文件夹；自动从data/scenario/default.json读取提示词文件并生成配置文件，在card文件夹生成card.json。
+
 2.配置文件card.json由system_prompt（系统提示）、user_name（对话者在角色扮演中的角色）、assistant_name（ai所扮演的角色）、summarize_lens（生成回忆的长度）、conversation_num（临时对话的数量）、output_num（输出字数，在提示词中限制，可能没有作用）构成，系统自动总结生成的可能不准确，请自行核验。
+
 3.目前插件仍在开发中，遇到任何问题欢迎反馈。
+
 <!-- 插件开发者自行填写插件使用说明 -->
