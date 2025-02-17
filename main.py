@@ -199,7 +199,6 @@ class Message_Recorder(BasePlugin):
 
 #############################总结######################################
         if len(msg[Date]) > self.conversation_num + 2 or len(dates) > 1:
-            print("\n=== 开始总结 ===")
 
             summarize = Summarize(msg, self.model, self.user_name, self.assistant_name, int(ctx.event.launcher_id),
                                   self.summarize_lens, self.ap)
@@ -314,7 +313,6 @@ class Message_Recorder(BasePlugin):
 
         #############################总结######################################
         if len(msg[Date]) > self.conversation_num + 2 or len(dates) > 1:
-            print(f"\n=== 短期记忆已达{str(self.conversation_num)}条，开始总结 ===")
 
             summarize = Summarize(msg, self.model, self.user_name, self.assistant_name, int(ctx.event.launcher_id),
                                   self.summarize_lens, self.ap)

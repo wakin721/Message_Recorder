@@ -22,7 +22,7 @@ class Summarize:
     async def summarize(self):
 
         if len(self.message) < 3:
-            print("对话过少无法生成总结")
+            print("对话过少无法生成回忆")
             return
 
         data_folder = f"{os.getcwd()}\\data\\plugins\\Message_Recorder\\data"
@@ -50,18 +50,18 @@ class Summarize:
                 summarize = ai_generation(self.ap, self.model)
                 reply = await summarize.generate_reply([Message(role="user", content=temp_input)])
 
-                print(f"生成的总结:{summarize_temp}")
-                print("\n=== 总结已更新 ===")
+                print(f"生成的回忆:{summarize_temp}")
+                print("\n=== 回忆已更新 ===")
             else:
-                print(f"生成的总结:{reply}")
-                print("\n=== 总结已更新 ===")
+                print(f"生成的回忆:{reply}")
+                print("\n=== 回忆已更新 ===")
 
             with open(f"{data_folder}\\person_{str(self.event_id)}_summarize.json", 'w',
                       encoding="utf-8") as f:  # 保存记录
                 json_str = json.dumps(summarize, ensure_ascii=False)
                 f.write(json_str)
             print("\n=== 保存成功 ===")
-            print(f"总结保存地点：{data_folder}\\person_{str(self.event_id)}_summarize.json")
+            print(f"回忆保存地点：{data_folder}\\person_{str(self.event_id)}_summarize.json")
 
         except:  # 若无json文件则生成
             summarize = {self.dates[0]: reply}
@@ -69,23 +69,23 @@ class Summarize:
                       encoding="utf-8") as f:  # 保存记录
                 json_str = json.dumps(summarize, ensure_ascii=False)
                 f.write(json_str)
-        print(f"生成的总结:{reply}")
+        print(f"生成的回忆:{reply}")
         print("\n=== 保存成功 ===")
-        print(f"总结保存地点：{data_folder}\\person_{str(self.event_id)}_summarize.json")
+        print(f"回忆保存地点：{data_folder}\\person_{str(self.event_id)}_summarize.json")
 
 
     async def summarize_(self):
         self.dates = list(self.msg.keys())
         while True:
             if len(self.dates) > 1:
-                print(f"=== 正在生成{self.dates[0]}的总结 ===")
+                print(f"=== 正在生成{self.dates[0]}的回忆 ===")
                 self.message = self.msg[self.dates[0]]
                 await self.summarize()
                 del self.msg[self.dates[0]]
                 self.dates = list(self.msg.keys())
 
             else:
-                print(f"=== 正在生成{self.dates[0]}的总结 ===")
+                print(f"=== 正在生成{self.dates[0]}的回忆 ===")
                 self.message = self.msg[self.dates[0]]
                 await self.summarize()
 
