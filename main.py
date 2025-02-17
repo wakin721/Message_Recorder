@@ -10,7 +10,7 @@ from plugins.Message_Recorder.system.summarize import Summarize
 from plugins.Message_Recorder.system.AI_generation import ai_generation
 
 # 注册插件
-@register(name="Message_Recorder", description="用于记录聊天记录", version="preview2.4", author="和錦わきん")
+@register(name="Message_Recorder", description="用于记录聊天记录", version="preview1.4", author="和錦わきん")
 class Message_Recorder(BasePlugin):
 
     # 插件加载时触发
