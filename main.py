@@ -23,6 +23,7 @@ class Message_Recorder(BasePlugin):
         self.summarize_lens = None
         self.conversation_num = None
         self.output_num = None
+        self.summary_date = None
 
 
     # 异步初始化
@@ -59,13 +60,14 @@ class Message_Recorder(BasePlugin):
                 self.summarize_lens = int(information["summarize_lens"])
                 self.conversation_num = int(information["conversation_num"])
                 self.output_num = int(information["output_num"])
+                self.summary_date = int(f"-{information['summary_date']}")
 
         except:
             print(f"未找到card文件，开始生成配置文件")
             print(f"配置文件生成地址：{os.getcwd()}\\data\\scenario\\default.json")
 
             information = {'system_prompt': '', 'user_name': '', 'assistant_name': '', 'summarize_lens': 150,
-                           'conversation_num': 10, 'output_num': 150}
+                           'conversation_num': 10, 'output_num': 150, "summary_date": "3"}
 
             try:
                 with open(f"{os.getcwd()}\\data\\scenario\\default.json", "r", encoding="utf-8") as f:
@@ -83,6 +85,7 @@ class Message_Recorder(BasePlugin):
             self.summarize_lens =  int(information["summarize_lens"])
             self.conversation_num = int(information["conversation_num"])
             self.output_num = int(information["output_num"])
+            self.summary_date = int(f"-{information['summary_date']}")
 
         if user_name == "" or assistant_name == "":
             temp_input = f"请从以下系统提示中提取出对话发起者和对话回答者：\n{system_prompt}\n总结要求：\n1.对话发起者在前，对话回答者在后，之间用英文逗号分隔\n2.总数必须是2个\n3.每个标签必须独立，不能包含换行符\n4. 直接返回标签列表，不要其他解释"
@@ -92,10 +95,13 @@ class Message_Recorder(BasePlugin):
 
             name = name.split(",")
             user_name = name[0].replace(" ", "")
+            user_name = user_name.split('\n')[0]
             assistant_name = name[1].replace(" ", "")
+            assistant_name = assistant_name.split('\n')[0]
             self.user_name = information['user_name'] = user_name
             self.assistant_name = information['assistant_name'] = assistant_name
             print(f"人名已提取,user_name={user_name},assistant_name={assistant_name}")
+            print(f"=== 配置文件由系统自动生成，请检查“{card_folder}\\card.json”文件 ===")
             with open(f"{card_folder}\\card.json", 'w', encoding="utf-8") as f:  # 保存记录
                 json_str = json.dumps(information, ensure_ascii=False)
                 f.write(json_str)
@@ -123,18 +129,18 @@ class Message_Recorder(BasePlugin):
 
         msg_user = ctx.event.text_message  # 这里的 event 即为 PersonNormalMessageReceived 的对象
 
-        if msg_user == "查看总结":
+        if msg_user == "查看回忆":
             dates = summarize.keys()
             if len(dates) > 0:
-                output = "当前总结：\n"
+                output = "当前回忆：\n"
                 for i in dates:
                     output += i + ":\n" + summarize[i] + "\n"
             else:
-                output = "当前尚未生成总结"
+                output = "当前尚未生成回忆"
 
-            print("\n=== 以下为总结内容 ===")
+            print("\n=== 以下为回忆内容 ===")
             print(output)
-            print("\n=== 以上为总结内容 ===")
+            print("\n=== 以上为回忆内容 ===")
 
             msg_chain = MessageChain([
                 # Quote(),
@@ -160,8 +166,18 @@ class Message_Recorder(BasePlugin):
                     message.append(i)
                 break
 
+        load_date = list(summarize.keys())
+        load_date = load_date[self.summary_date:]
+
+        load_summary = ""
+        for i in load_date:
+            try:
+                load_summary += f"{i}:{summarize[i]}"
+            except:
+                continue
+
         message.insert(0, {"role": "system",
-                           "content": f"{self.system_prompt}\n以下是先前对话的总结：{summarize}\n请根据以上信息作出符合{self.assistant_name}角色设定的回复，确保回复充分体现{self.assistant_name}的性格特征和情感反应。回复字数不超过{self.output_num}字。"})
+                           "content": f"{self.system_prompt}\n以下是先前对话的总结：{load_summary}\n请根据以上信息作出符合{self.assistant_name}角色设定的回复，确保回复充分体现{self.assistant_name}的性格特征和情感反应。回复字数不超过{self.output_num}字。"})
 
         message.append({"role": "user", "content": '[' + Time + ']' + msg_user})  # 修饰输入
 
@@ -273,6 +289,16 @@ class Message_Recorder(BasePlugin):
                 for i in msg[temp_dates[0]]:
                     message.append(i)
                 break
+
+        load_date = list(summarize.keys())
+        load_date = load_date[self.summary_date:]
+
+        load_summary = ""
+        for i in load_date:
+            try:
+                load_summary += f"{i}:{summarize[i]}"
+            except:
+                continue
 
         message.insert(0, {"role": "system",
                            "content": f"{self.system_prompt}\n以下是先前对话的总结：{summarize}\n请根据以上信息作出符合{self.assistant_name}角色设定的回复，确保回复充分体现{self.assistant_name}的性格特征和情感反应。回复字数不超过{self.output_num}字。"})

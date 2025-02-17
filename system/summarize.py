@@ -69,9 +69,9 @@ class Summarize:
                       encoding="utf-8") as f:  # 保存记录
                 json_str = json.dumps(summarize, ensure_ascii=False)
                 f.write(json_str)
-        print(f"生成的回忆:{reply}")
-        print("\n=== 保存成功 ===")
-        print(f"回忆保存地点：{data_folder}\\person_{str(self.event_id)}_summarize.json")
+            print(f"生成的回忆:{reply}")
+            print("\n=== 保存成功 ===")
+            print(f"回忆保存地点：{data_folder}\\person_{str(self.event_id)}_summarize.json")
 
 
     async def summarize_(self):
