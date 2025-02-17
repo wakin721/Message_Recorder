@@ -1,4 +1,4 @@
-# HelloPlugin
+# Message_Recorder
 
 <!--
 ## 插件开发者详阅
@@ -27,10 +27,6 @@
 
 下方是给用户看的内容，按需修改
 -->
-
-# Message_Recorder
-
-<!--
 ## 插件开发者详阅
 @@ -33,26 +33,10 @@
 配置完成 [LangBot](https://github.com/RockChinQ/LangBot) 主程序后使用管理员账号向机器人发送命令即可安装：
@@ -46,13 +42,19 @@
 
 ## 使用
 1.启动插件后会自动在data/plugins/Message_Recorder生成回忆文件夹和临时文件夹；自动从data/scenario/default.json读取提示词文件并生成配置文件，在card文件夹生成card.json。
+
 2.配置文件card.json由system_prompt（系统提示）、user_name（对话者在角色扮演中的角色）、assistant_name（ai所扮演的角色）、summarize_lens（生成回忆的长度）、conversation_num（临时对话的数量）、output_num（输出字数，在提示词中限制，可能没有作用）构成，系统自动总结生成的user_name和assistant_name可能不准确，请自行核验。
+
 3.目前插件仍在开发中，遇到任何问题欢迎反馈。
 <!-- 插件开发者自行填写插件使用说明 -->
 
+
+
 ## 版本
 preview1.2：更新了聊天记录的保存及回忆生成逻辑，可以通过输入命令：查看回忆 查看已生成的回忆。
+
 preview1.1：优化代码，增加模型生成的超时机制。
+
 preview1.0：随便写了一个记忆插件，代码参考了小馄饨的QQSillyTavern：https://github.com/sanxianxiaohuntun/QQSillyTavern
 
 <!-- 插件开发者自行填写插件使用说明 -->
