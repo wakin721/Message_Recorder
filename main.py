@@ -6,12 +6,11 @@ import os
 import json
 import datetime
 import copy
-import asyncio
 from plugins.Message_Recorder.system.summarize import Summarize
 from plugins.Message_Recorder.system.AI_generation import ai_generation
 
 # 注册插件
-@register(name="Message_Recorder", description="用于记录聊天记录", version="2.1", author="和錦わきん")
+@register(name="Message_Recorder", description="用于记录聊天记录", version="preview2.3", author="和錦わきん")
 class Message_Recorder(BasePlugin):
 
     # 插件加载时触发
@@ -65,7 +64,7 @@ class Message_Recorder(BasePlugin):
             print(f"未找到card文件，开始生成配置文件")
             print(f"配置文件生成地址：{os.getcwd()}\\data\\scenario\\default.json")
 
-            information = {'system_prompt': '', 'user_name': '', 'assistant_name': '', 'summarize_lens': 200,
+            information = {'system_prompt': '', 'user_name': '', 'assistant_name': '', 'summarize_lens': 150,
                            'conversation_num': 10, 'output_num': 150}
 
             try:
@@ -88,16 +87,8 @@ class Message_Recorder(BasePlugin):
         if user_name == "" or assistant_name == "":
             temp_input = f"请从以下系统提示中提取出对话发起者和对话回答者：\n{system_prompt}\n总结要求：\n1.对话发起者在前，对话回答者在后，之间用英文逗号分隔\n2.总数必须是2个\n3.每个标签必须独立，不能包含换行符\n4. 直接返回标签列表，不要其他解释"
 
-            async def ai_reply(temp_input, model):
-                summarize = ai_generation(self.ap)
-                summarize_temp = await summarize.generate_reply([Message(role="user", content=temp_input)], model)
-                return summarize_temp
-
-            try:
-                name = await asyncio.wait_for(ai_reply(temp_input, model), timeout=20)
-            except asyncio.TimeoutError:
-                print("\n=== 人名提取超时 ===")
-                return
+            summarize = ai_generation(self.ap,model)
+            name = await summarize.generate_reply([Message(role="user", content=temp_input)])
 
             name = name.split(",")
             user_name = name[0].replace(" ", "")
@@ -170,7 +161,7 @@ class Message_Recorder(BasePlugin):
                 break
 
         message.insert(0, {"role": "system",
-                       "content": f"{self.system_prompt}\n以下是先前对话的总结：{summarize}\n请根据以上信息作出符合{self.assistant_name}角色设定的回复，确保回复充分体现{self.assistant_name}的性格特征和情感反应。回复字数不超过{self.output_num}字。"})
+                           "content": f"{self.system_prompt}\n以下是先前对话的总结：{summarize}\n请根据以上信息作出符合{self.assistant_name}角色设定的回复，确保回复充分体现{self.assistant_name}的性格特征和情感反应。回复字数不超过{self.output_num}字。"})
 
         message.append({"role": "user", "content": '[' + Time + ']' + msg_user})  # 修饰输入
 
@@ -183,17 +174,8 @@ class Message_Recorder(BasePlugin):
         for i in message:
             temp_list.append(Message(role=i['role'], content=i['content']))
 
-        async def ai_reply(temp_list,model):
-            summarize = ai_generation(self.ap)
-            reply = await summarize.generate_reply(temp_list,model)
-            return reply
-
-        try:
-            reply = await asyncio.wait_for(ai_reply(temp_list,self.model), timeout=25)
-
-        except asyncio.TimeoutError:
-            reply = "AI生成超时"
-            print("\n=== AI生成超时 ===")
+        summarize = ai_generation(self.ap, self.model)
+        reply = await summarize.generate_reply(temp_list)
 
         msg_chain = MessageChain([
             # Quote(),
@@ -219,14 +201,9 @@ class Message_Recorder(BasePlugin):
         if len(msg[Date]) > self.conversation_num + 2 or len(dates) > 1:
             print("\n=== 开始总结 ===")
 
-            async def async_func(msg,model,user_name,assistant_name,summarize_lens):
-                summarize = Summarize(msg,model,user_name,assistant_name,int(ctx.event.launcher_id),summarize_lens,self.ap)
-                await summarize.summarize_memory()
-
-            try:
-                await asyncio.wait_for(async_func(msg,self.model,self.user_name,self.assistant_name,self.summarize_lens), timeout=25)
-            except asyncio.TimeoutError:
-                print("\n=== 总结保存超时 ===")
+            summarize = Summarize(msg, self.model, self.user_name, self.assistant_name, int(ctx.event.launcher_id),
+                                  self.summarize_lens, self.ap)
+            await summarize.summarize_memory()
 
             ctx.prevent_default()  # 阻止该事件默认行为（向接口获取回复）
             ctx.prevent_postorder()
@@ -299,7 +276,7 @@ class Message_Recorder(BasePlugin):
                 break
 
         message.insert(0, {"role": "system",
-                       "content": f"{self.system_prompt}\n以下是先前对话的总结：{summarize}\n请根据以上信息作出符合{self.assistant_name}角色设定的回复，确保回复充分体现{self.assistant_name}的性格特征和情感反应。回复字数不超过{self.output_num}字。"})
+                           "content": f"{self.system_prompt}\n以下是先前对话的总结：{summarize}\n请根据以上信息作出符合{self.assistant_name}角色设定的回复，确保回复充分体现{self.assistant_name}的性格特征和情感反应。回复字数不超过{self.output_num}字。"})
 
         message.append({"role": "user", "content": '[' + Time + ']' + msg_user})  # 修饰输入
 
@@ -313,17 +290,8 @@ class Message_Recorder(BasePlugin):
         for i in message:
             temp_list.append(Message(role=i['role'], content=i['content']))
 
-        async def ai_reply(temp_list, model):
-            summarize = ai_generation(self.ap)
-            reply = await summarize.generate_reply(temp_list, model)
-            return reply
-
-        try:
-            reply = await asyncio.wait_for(ai_reply(temp_list, self.model), timeout=25)
-
-        except asyncio.TimeoutError:
-            reply = "AI生成超时"
-            print("\n=== AI生成超时 ===")
+        summarize = ai_generation(self.ap, self.model)
+        reply = await summarize.generate_reply(temp_list)
 
         msg_chain = MessageChain([
             # Quote(),
@@ -348,15 +316,9 @@ class Message_Recorder(BasePlugin):
         if len(msg[Date]) > self.conversation_num + 2 or len(dates) > 1:
             print(f"\n=== 短期记忆已达{str(self.conversation_num)}条，开始总结 ===")
 
-            async def async_func(msg, model, user_name, assistant_name, summarize_lens):
-                summarize = Summarize(msg, model, user_name, assistant_name, int(ctx.event.launcher_id), summarize_lens,
-                                      self.ap)
-                await summarize.summarize_memory()
-
-            try:
-                await asyncio.wait_for(async_func(msg, self.model, self.user_name, self.assistant_name, self.summarize_lens), timeout=25)
-            except asyncio.TimeoutError:
-                print("\n=== 总结保存超时 ===")
+            summarize = Summarize(msg, self.model, self.user_name, self.assistant_name, int(ctx.event.launcher_id),
+                                  self.summarize_lens, self.ap)
+            await summarize.summarize_memory()
 
             ctx.prevent_default()  # 阻止该事件默认行为（向接口获取回复）
             ctx.prevent_postorder()
