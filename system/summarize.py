@@ -25,7 +25,7 @@ class Summarize:
             print("对话过少无法生成回忆")
             return
 
-        data_folder = f"{os.getcwd()}\\data\\plugins\\Message_Recorder\\data"
+        data_folder = f"{os.getcwd()}/data/plugins/Message_Recorder/data"
 
         temp_list = str(self.message)
         temp_list = temp_list.replace("user", self.user_name)
@@ -37,7 +37,7 @@ class Summarize:
         reply = await summarize.generate_reply([Message(role="user", content=temp_input)])
 
         try:  # 若有json文件则打开
-            with open(f"{data_folder}\\person_{str(self.event_id)}_summarize.json", "r", encoding="utf-8") as f:
+            with open(f"{data_folder}/person_{str(self.event_id)}_summarize.json", "r", encoding="utf-8") as f:
                 summarize = json.load(f)
                 try:
                     summarize[self.dates[0]] += reply
@@ -56,22 +56,22 @@ class Summarize:
                 print(f"生成的回忆:{reply}")
                 print("\n=== 回忆已更新 ===")
 
-            with open(f"{data_folder}\\person_{str(self.event_id)}_summarize.json", 'w',
+            with open(f"{data_folder}/person_{str(self.event_id)}_summarize.json", 'w',
                       encoding="utf-8") as f:  # 保存记录
                 json_str = json.dumps(summarize, ensure_ascii=False)
                 f.write(json_str)
             print("\n=== 保存成功 ===")
-            print(f"回忆保存地点：{data_folder}\\person_{str(self.event_id)}_summarize.json")
+            print(f"回忆保存地点：{data_folder}/person_{str(self.event_id)}_summarize.json")
 
         except:  # 若无json文件则生成
             summarize = {self.dates[0]: reply}
-            with open(f"{data_folder}\\person_{str(self.event_id)}_summarize.json", 'w',
+            with open(f"{data_folder}/person_{str(self.event_id)}_summarize.json", 'w',
                       encoding="utf-8") as f:  # 保存记录
                 json_str = json.dumps(summarize, ensure_ascii=False)
                 f.write(json_str)
             print(f"生成的回忆:{reply}")
             print("\n=== 保存成功 ===")
-            print(f"回忆保存地点：{data_folder}\\person_{str(self.event_id)}_summarize.json")
+            print(f"回忆保存地点：{data_folder}/person_{str(self.event_id)}_summarize.json")
 
 
     async def summarize_(self):
@@ -92,8 +92,8 @@ class Summarize:
                 message_ = {}
                 message_[self.dates[0]] = self.msg[self.dates[0]][-2:]
 
-                temp_folder = f"{os.getcwd()}\\data\\plugins\\Message_Recorder\\temp"
-                with open(f"{temp_folder}\\person_{str(self.event_id)}_temp.json", 'w', encoding="utf-8") as f:  # 保存记录
+                temp_folder = f"{os.getcwd()}/data/plugins/Message_Recorder/temp"
+                with open(f"{temp_folder}/person_{str(self.event_id)}_temp.json", 'w', encoding="utf-8") as f:  # 保存记录
                     json_str = json.dumps(message_, ensure_ascii=False)
                     f.write(json_str)
                 print("\n=== 已删除临时对话 ===")
