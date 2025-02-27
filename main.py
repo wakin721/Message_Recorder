@@ -28,7 +28,7 @@ class Message_Recorder(BasePlugin):
 
     # 异步初始化
     async def initialize(self):
-        folder = f"{os.getcwd()}\\data\\plugins\\Message_Recorder"  # 创建文件夹
+        folder = f"{os.getcwd()}/data/plugins/Message_Recorder"  # 创建文件夹
         self.data_folder = data_folder = os.path.join(folder, "data")  # 创建data文件夹
         if not os.path.exists(data_folder):
             os.makedirs(data_folder)
@@ -45,14 +45,14 @@ class Message_Recorder(BasePlugin):
             print(f"未找到card文件夹，已在“{card_folder}”创建card文件夹")
 
         try:
-            with open(f"{os.getcwd()}\\data\\config\\provider.json", "r", encoding="utf-8") as f:
+            with open(f"{os.getcwd()}/data/config/provider.json", "r", encoding="utf-8") as f:
                 content = json.load(f)
                 self.model = model = content['model']
         except:
-            print(f"未找到模型，请检查“{os.getcwd()} \\data\\config\\provider.json”文件")
+            print(f"未找到模型，请检查“{os.getcwd()}/data/config/provider.json”文件")
 
         try:
-            with open(f"{card_folder}\\card.json", "r", encoding="utf-8") as f:
+            with open(f"{card_folder}/card.json", "r", encoding="utf-8") as f:
                 information = json.load(f)
                 self.system_prompt = system_prompt = information['system_prompt']
                 self.user_name = user_name = information["user_name"]
@@ -64,21 +64,21 @@ class Message_Recorder(BasePlugin):
 
         except:
             print(f"未找到card文件，开始生成配置文件")
-            print(f"配置文件生成地址：{os.getcwd()}\\data\\scenario\\default.json")
+            print(f"配置文件生成地址：{os.getcwd()}/data/scenario/default.json")
 
             information = {'system_prompt': '', 'user_name': '', 'assistant_name': '', 'summarize_lens': 150,
                            'conversation_num': 10, 'output_num': 150, "summary_date": "3"}
 
             try:
-                with open(f"{os.getcwd()}\\data\\scenario\\default.json", "r", encoding="utf-8") as f:
+                with open(f"{os.getcwd()}/data/scenario/default.json", "r", encoding="utf-8") as f:
                     content = json.load(f)
                     self.system_prompt = system_prompt = content['prompt'][0]['content']
                     information["system_prompt"] = system_prompt
 
-                    print(f"已从“{os.getcwd()}\\data\\scenario\\default.json”获取system_prompt文件")
+                    print(f"已从“{os.getcwd()}/data/scenario/default.json”获取system_prompt文件")
 
             except:
-                print(f"未找到prompt文件，请检查“{os.getcwd()}\\data\\scenario\\default.json”文件")
+                print(f"未找到prompt文件，请检查“{os.getcwd()}/data/scenario/default.json”文件")
 
             user_name = ""
             assistant_name = ""
@@ -101,8 +101,8 @@ class Message_Recorder(BasePlugin):
             self.user_name = information['user_name'] = user_name
             self.assistant_name = information['assistant_name'] = assistant_name
             print(f"人名已提取,user_name={user_name},assistant_name={assistant_name}")
-            print(f"=== 配置文件由系统自动生成，请检查“{card_folder}\\card.json”文件 ===")
-            with open(f"{card_folder}\\card.json", 'w', encoding="utf-8") as f:  # 保存记录
+            print(f"=== 配置文件由系统自动生成，请检查“{card_folder}/card.json”文件 ===")
+            with open(f"{card_folder}/card.json", 'w', encoding="utf-8") as f:  # 保存记录
                 json_str = json.dumps(information, ensure_ascii=False)
                 f.write(json_str)
             print("配置文件已保存")
@@ -115,13 +115,13 @@ class Message_Recorder(BasePlugin):
         Date = datetime.datetime.now().strftime('%Y-%m-%d')
 
         try:
-            with open(f"{self.data_folder}\\person_{str(ctx.event.sender_id)}_summarize.json", "r", encoding="utf-8") as f:
+            with open(f"{self.data_folder}/person_{str(ctx.event.sender_id)}_summarize.json", "r", encoding="utf-8") as f:
                 summarize = json.load(f)
         except:
             summarize = {}
 
         try:
-            with open(f"{self.temp_folder}\\person_{str(ctx.event.sender_id)}_temp.json", "r", encoding="utf-8") as f:
+            with open(f"{self.temp_folder}/person_{str(ctx.event.sender_id)}_temp.json", "r", encoding="utf-8") as f:
                 msg = json.load(f)
 
         except:
@@ -208,7 +208,7 @@ class Message_Recorder(BasePlugin):
             # 记录消息
             msg[Date].append({"role": "assistant", "content": reply})
 
-            with open(f"{self.temp_folder}\\person_{str(ctx.event.sender_id)}_temp.json", 'w',
+            with open(f"{self.temp_folder}/person_{str(ctx.event.sender_id)}_temp.json", 'w',
                       encoding="utf-8") as f:  # 保存记录
                 json_str = json.dumps(msg, ensure_ascii=False)
                 f.write(json_str)
@@ -238,13 +238,13 @@ class Message_Recorder(BasePlugin):
         Date = datetime.datetime.now().strftime('%Y-%m-%d')
 
         try:
-            with open(f"{self.data_folder}\\group_{str(ctx.event.launcher_id)}_summarize.json", "r", encoding="utf-8") as f:
+            with open(f"{self.data_folder}/group_{str(ctx.event.launcher_id)}_summarize.json", "r", encoding="utf-8") as f:
                 summarize = json.load(f)
         except:
             summarize = {}
 
         try:
-            with open(f"{self.temp_folder}\\group_{str(ctx.event.launcher_id)}_temp.json", "r", encoding="utf-8") as f:
+            with open(f"{self.temp_folder}/group_{str(ctx.event.launcher_id)}_temp.json", "r", encoding="utf-8") as f:
                 msg = json.load(f)
 
         except:
@@ -332,7 +332,7 @@ class Message_Recorder(BasePlugin):
             # 记录消息
             msg[Date].append({"role": "assistant", "content": reply})
 
-            with open(f"{self.temp_folder}\\group_{str(ctx.event.launcher_id)}_temp.json", 'w',
+            with open(f"{self.temp_folder}/group_{str(ctx.event.launcher_id)}_temp.json", 'w',
                       encoding="utf-8") as f:  # 保存记录
                 json_str = json.dumps(msg, ensure_ascii=False)
                 f.write(json_str)
